@@ -18,10 +18,11 @@ def findCurrentFileMinMax(file_path):
             x, y = readXY(line)
             x = float(x)
             y = float(y)
-            if minNum < x < maxNum and x > wantedX:
+            if minNum < x < maxNum and y > wantedY:
+                wantedY = y
                 wantedX = x
-            if minNum < y < maxNum and y > wantedY:
-                wantedX = y
+            if x >= maxNum:
+                break
 
 
 def main():
