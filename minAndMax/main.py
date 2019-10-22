@@ -35,9 +35,12 @@ def main():
 
     listDir = os.listdir(fileDir)
     listDir = sorted(listDir, key=lambda x: int(x.split(".")[0]))
-    print(listDir)
+
     for fileName in listDir:
         findCurrentFileMinMax(fileDir + "/" + fileName, "output/{}.txt".format(currentTime))
+
+    print("calc over!")
+    print("output dir is in {}\\output".format(os.getcwd()))
 
 
 if __name__ == '__main__':
