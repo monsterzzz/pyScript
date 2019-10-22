@@ -1,19 +1,19 @@
 import os
+import time
 
 fileDir = input("please input the dir of file: ").strip("/")
 minNum = float(input("please input the min number: "))
 maxNum = float(input("please input the max number: "))
-wantedX = -1
-wantedY = -1
+currentTime = time.strftime("%Y%m%d%H%M", time.localtime(time.time()))
 
 
-def readXY(line_string: str):
+def readXY(line_string):
     return line_string.strip().split()
 
 
-def findCurrentFileMinMax(file_path):
-    global wantedX, wantedY
+def findCurrentFileMinMax(file_path, save_path):
     with open(file_path, "r") as f:
+        wantedX, wantedY = -1, -1
         for line in f:
             x, y = readXY(line)
             x = float(x)
@@ -23,14 +23,21 @@ def findCurrentFileMinMax(file_path):
                 wantedX = x
             if x >= maxNum:
                 break
+    with open(save_path, "a+") as f:
+        f.write("{} {}\n".format(wantedX, wantedY))
 
 
 def main():
-    global wantedX, wantedY
+    try:
+        os.mkdir("output")
+    except:
+        pass
+
     listDir = os.listdir(fileDir)
+    listDir = sorted(listDir, key=lambda x: int(x.split(".")[0]))
+    print(listDir)
     for fileName in listDir:
-        findCurrentFileMinMax(fileDir + "/" + fileName)
-    print(wantedX, wantedY)
+        findCurrentFileMinMax(fileDir + "/" + fileName, "output/{}.txt".format(currentTime))
 
 
 if __name__ == '__main__':
