@@ -28,8 +28,11 @@ def findCurrentFileMinMax(file_path, save_path):
 
 
 def main():
+
+    f_dir = os.path.split(os.path.realpath(__file__))[0] + "\\" + "output"
+
     try:
-        os.mkdir("output")
+        os.mkdir(f_dir)
     except:
         pass
 
@@ -37,11 +40,12 @@ def main():
     listDir = sorted(listDir, key=lambda x: int(x.split(".")[0]))
 
     for fileName in listDir:
-        findCurrentFileMinMax(fileDir + "/" + fileName, "output/{}.txt".format(currentTime))
+        findCurrentFileMinMax(fileDir + "/" + fileName, "{}/{}.txt".format(f_dir,currentTime))
 
     print("calc over!")
-    print("output dir is in {}\\output".format(os.getcwd()))
+    print("output dir is in {}".format(f_dir))
 
 
 if __name__ == '__main__':
     main()
+
