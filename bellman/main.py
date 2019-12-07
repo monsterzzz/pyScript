@@ -5,6 +5,7 @@ import struct
 import random
 import json
 import copy
+import os
 
 
 class Node:
@@ -19,6 +20,14 @@ class Node:
         self.s.bind(("127.0.0.1", port))
         self.dv = {}
         self.messageQueue = []
+        self.fileName = "./output/node_{}.txt".format(self.node)
+        self.step = 1
+
+        try:
+            os.remove(self.fileName)
+
+        except:
+            pass
 
         # 如果1秒内没有收到任何消息，说明已经收敛
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_RCVTIMEO, 1000)
@@ -28,40 +37,55 @@ class Node:
                 "distance": v,
                 "pass": []
             }
+        with open(self.fileName, 'a', encoding="utf-8") as f:
+            f.write("Node {}\n".format(self.node))
+            f.write("currentDV\n")
+            f.write(self.getDvTable())
+            f.write("\n-------------------\n\n")
 
     def makeServer(self):
+        f = open(self.fileName, 'a+')
         while True:
             try:
                 data, addr = self.s.recvfrom(2048)
             except TimeoutError as e:
                 # 收敛之后开始保存自己的dv表
-                self.saveDv()
+                # self.saveDv()
                 self.s.close()
                 return
 
             t = self.unpack(data)
-            # print("***")
-            # print(self.node, "recv from", t[0], t)
-            a = copy.deepcopy(self.getDvTable(False))
-            # print("current:", a)
+            print("Step{}".format(self.step), file=f)
+            print("from node", t[0], file=f)
+            print(t[1], file=f)
             flag = self.compare(t, self.getDvTable(False))
             # print("compare:", flag)
             if flag:
-                # print("compareResult: ", self.getDvTable(False))
+                print("Node {} is new".format(self.node), file=f)
+                print("current DV", file=f)
+                print(self.getDvTable(), file=f)
+                print(file=f)
                 self.sendDv()
-            # print("***")
+            else:
+                print("Not Update\n", file=f)
+            self.step += 1
 
-    def saveDv(self):
-        with open("output/{}.txt".format(self.node), "w+", encoding="utf-8") as f:
-            a = self.getDvTable(False)
-            for i in a[1].items():
-                start = a[0]
-                end = i[0]
-                distance = i[1]["distance"]
-                tmpWay = [start] + i[1]["pass"] + [end]
-                passWay = "->".join(tmpWay)
-                fmt = "{} 到 {} 的最短距离为 {} ： 经过路径为 {}".format(start, end, distance, passWay)
-                f.write(fmt + "\n")
+
+    # def saveDv(self, data):
+    #     with open(self.fileName, 'a+', encoding="utf-8") as f:
+    #         f.write(data)
+
+    # def saveDv(self):
+    #     with open("output/{}.txt".format(self.node), "w+", encoding="utf-8") as f:
+    #         a = self.getDvTable(False)
+    #         for i in a[1].items():
+    #             start = a[0]
+    #             end = i[0]
+    #             distance = i[1]["distance"]
+    #             tmpWay = [start] + i[1]["pass"] + [end]
+    #             passWay = "->".join(tmpWay)
+    #             fmt = "{} 到 {} 的最短距离为 {} ： 经过路径为 {}".format(start, end, distance, passWay)
+    #             f.write(fmt + "\n")
 
     def compare(self, aNode, bNode):
         a = copy.deepcopy(aNode)
@@ -121,7 +145,7 @@ def startProcess(node):
 
 
 if __name__ == "__main__":
-    f = open("data1.json")
+    f = open("data.json")
     nodeMsg = json.load(f)
     f.close()
     portTable = {}
