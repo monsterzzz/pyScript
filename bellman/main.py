@@ -52,6 +52,7 @@ class Node:
                 # 收敛之后开始保存自己的dv表
                 # self.saveDv()
                 self.s.close()
+                f.close()
                 return
 
             t = self.unpack(data)
@@ -107,7 +108,7 @@ class Node:
                 tmp["distance"] = distance
                 tmp["pass"] = b[1].get(a[0]).get("pass") + [a[0]]
                 # tmp["pass"] = [a[0]] + b[1].get(a[0])["pass"]
-                # tmp["pass"].append(a[0])
+                # tmp["pass"] .append(a[0])
                 b[1][key] = tmp
                 update = True
         if update:

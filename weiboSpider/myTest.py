@@ -41,7 +41,8 @@ class WeiBo:
         # 需要 从 Edge浏览器 登录 m.weibo.com 获得cookie
         # chrome浏览器可能会获取不到
         cookies = [
-            "WEIBOCN_FROM=1110006030; M_WEIBOCN_PARAMS=oid%3D4446830295014937%26luicode%3D20000061%26lfid%3D4446830295014937%26uicode%3D20000061%26fid%3D4446830295014937; _T_WM=29566791574; MLOGIN=0; XSRF-TOKEN=98d1c1"
+            "_ga=GA1.2.1786443411.1572615119; _T_WM=51649568104; ALF=1578251148; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WhXUmlARsJwXKRD_U1gz9qx5JpX5K-hUgL.FoeN1K2XSoB4eoM2dJLoIEXLxKML1--L12eLxKML1-BLBK2LxK-LBKBLBKMLxKnLBK-LB.qLxKML1KeL1-et; MLOGIN=1; WEIBOCN_FROM=1110006030; SCF=Ah8XD87cbmuICeTdk7Z9PKmZhDhhWuFxD_nBvGDYqtgw4Cl7j-qom00LvDjT7uK1Ha_iisQwLTjYIBvmL4Yai-o.; SUB=_2A25w7zznDeRhGeVJ4lMV9irFyTuIHXVQEESvrDV6PUJbktAKLRjYkW1NT9r6UClQqH97xssPHoPFoCVHCR4nT2o4; SUHB=0WGc7cZ52Vwy2B; SSOLoginState=1575701688; XSRF-TOKEN=9b1881; M_WEIBOCN_PARAMS=oid%3D4446809286461446%26luicode%3D20000061%26lfid%3D4446809286461446%26uicode%3D20000174"
+            # "WEIBOCN_FROM=1110006030; M_WEIBOCN_PARAMS=oid%3D4446830295014937%26luicode%3D20000061%26lfid%3D4446830295014937%26uicode%3D20000061%26fid%3D4446830295014937; _T_WM=29566791574; MLOGIN=0; XSRF-TOKEN=98d1c1"
         ]
         headers['User-Agent'] = random.choice(user_agent_list)
         headers["Cookie"] = random.choice(cookies)
@@ -178,6 +179,7 @@ class WeiBo:
     # 获取单个微博信息， 默认获取最大评论数为200条，innerCommentNum为200条，这个指的是楼中楼回复
     def getWeiBoItem(self, url, commentNum=200, innerCommentNum=200):
         resp = self.requestGet(url)
+        # print(url)
         reStr = re.findall(r"render_data = (.*?)\[0\]", resp.text, re.S)[0]  # 正则获取script标签里面的内容， 因为正文信息直接返回在html里面
         itemInfo = json.loads(reStr)[0]
 
@@ -194,7 +196,7 @@ class WeiBo:
             "comments": []
         }
 
-        print(result)
+        # print(result)
 
 
         # 评论接口
